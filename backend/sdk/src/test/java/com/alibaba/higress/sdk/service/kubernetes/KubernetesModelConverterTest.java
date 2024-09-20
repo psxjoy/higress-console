@@ -74,7 +74,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with no rules
+     * Test for ingress with no rules
      */
     @Test
     public void isIngressSupportedTestMissingRules() {
@@ -86,7 +86,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with multiple rules
+     * Test for ingress with multiple rules
      */
     @Test
     public void isIngressSupportedTestMultipleRules() {
@@ -97,7 +97,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with no http rule
+     * Test for ingress with no http rule
      */
     @Test
     public void isIngressSupportedTestMissingHttpRule() {
@@ -108,7 +108,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with no path
+     * Test for ingress with no path
      */
     @Test
     public void isIngressSupportedTestMissingPath() {
@@ -122,7 +122,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with multiple paths
+     * Test for ingress with multiple paths
      */
     @Test
     public void isIngressSupportedTestMultiplePaths() {
@@ -134,7 +134,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with unsupported path type
+     * Test for ingress with unsupported path type
      */
     @Test
     public void isIngressSupportedTestUnsupportedPathType() {
@@ -145,7 +145,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with no backend
+     * Test for ingress with no backend
      */
     @Test
     public void isIngressSupportedTestMissingBackend() {
@@ -156,7 +156,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with unsupported backend kind
+     * Test for ingress with unsupported backend kind
      */
     @Test
     public void isIngressSupportedTestServiceBackend() {
@@ -167,7 +167,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with unsupported backend kind
+     * Test for ingress with unsupported backend kind
      */
     @Test
     public void isIngressSupportedTestNonMcpBackend() {
@@ -179,7 +179,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with all supported fields
+     * Test for ingress with all supported fields
      */
     @Test
     public void isIngressSupportedTestAllGood() {
@@ -188,7 +188,7 @@ public class KubernetesModelConverterTest {
     }
 
     /**
-     *  Test for ingress with no annotations
+     * Test for ingress with no annotations
      */
     @Test
     public void ingress2RouteTestPrefixPathSingleService() {
@@ -298,10 +298,10 @@ public class KubernetesModelConverterTest {
         V1Ingress ingress = buildBasicSupportedIngress();
 
         V1ObjectMeta metadata = ingress.getMetadata();
-        metadata.setName("test");
+        metadata.setName("higressTest");
         KubernetesUtil.setAnnotation(metadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "20% hello1.default.svc.cluster.local:8080\n"
-                        + "30% hello2.default.svc.cluster.local:18080 v1\n50% hello3.default.svc.cluster.local v2");
+                "20% higress1.default.svc.cluster.local:8080\n"
+                        + "30% higress2.default.svc.cluster.local:18080 v1\n50% higress3.default.svc.cluster.local v2");
 
         V1HTTPIngressPath path = ingress.getSpec().getRules().get(0).getHttp().getPaths().get(0);
         path.setPathType(KubernetesConstants.IngressPathType.PREFIX);
@@ -315,9 +315,9 @@ public class KubernetesModelConverterTest {
         pathPredicate.setMatchType(RoutePredicateTypeEnum.PRE.toString());
         pathPredicate.setCaseSensitive(null);
         pathPredicate.setMatchValue(path.getPath());
-        UpstreamService service1 = new UpstreamService("hello1.default.svc.cluster.local", 8080, null, 20);
-        UpstreamService service2 = new UpstreamService("hello2.default.svc.cluster.local", 18080, "v1", 30);
-        UpstreamService service3 = new UpstreamService("hello3.default.svc.cluster.local", null, "v2", 50);
+        UpstreamService service1 = new UpstreamService("higress1.default.svc.cluster.local", 8080, null, 20);
+        UpstreamService service2 = new UpstreamService("higress2.default.svc.cluster.local", 18080, "v1", 30);
+        UpstreamService service3 = new UpstreamService("higress3.default.svc.cluster.local", null, "v2", 50);
         expectedRoute.setServices(Arrays.asList(service1, service2, service3));
         Assertions.assertEquals(expectedRoute, route);
     }
@@ -327,9 +327,9 @@ public class KubernetesModelConverterTest {
         V1Ingress ingress = buildBasicSupportedIngress();
 
         V1ObjectMeta metadata = ingress.getMetadata();
-        metadata.setName("test");
+        metadata.setName("higressTest");
         KubernetesUtil.setAnnotation(metadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "hello.default.svc.cluster.local");
+                "higress.default.svc.cluster.local");
 
         V1HTTPIngressPath path = ingress.getSpec().getRules().get(0).getHttp().getPaths().get(0);
         path.setPathType(KubernetesConstants.IngressPathType.EXACT);
@@ -343,7 +343,7 @@ public class KubernetesModelConverterTest {
         pathPredicate.setMatchType(RoutePredicateTypeEnum.EQUAL.toString());
         pathPredicate.setCaseSensitive(null);
         pathPredicate.setMatchValue(path.getPath());
-        UpstreamService service = new UpstreamService("hello.default.svc.cluster.local", null, null, 100);
+        UpstreamService service = new UpstreamService("higress.default.svc.cluster.local", null, null, 100);
         expectedRoute.setServices(Collections.singletonList(service));
         Assertions.assertEquals(expectedRoute, route);
     }
@@ -353,9 +353,9 @@ public class KubernetesModelConverterTest {
         V1Ingress ingress = buildBasicSupportedIngress();
 
         V1ObjectMeta metadata = ingress.getMetadata();
-        metadata.setName("test");
+        metadata.setName("higressTest");
         KubernetesUtil.setAnnotation(metadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "hello.default.svc.cluster.local");
+                "higress.default.svc.cluster.local");
         KubernetesUtil.setAnnotation(metadata, KubernetesConstants.Annotation.USE_REGEX_KEY,
                 KubernetesConstants.Annotation.TRUE_VALUE);
 
@@ -371,57 +371,51 @@ public class KubernetesModelConverterTest {
         pathPredicate.setMatchType(RoutePredicateTypeEnum.REGULAR.toString());
         pathPredicate.setCaseSensitive(null);
         pathPredicate.setMatchValue(path.getPath());
-        UpstreamService service = new UpstreamService("hello.default.svc.cluster.local", null, null, 100);
+        UpstreamService service = new UpstreamService("higress.default.svc.cluster.local", null, null, 100);
         expectedRoute.setServices(Collections.singletonList(service));
         Assertions.assertEquals(expectedRoute, route);
     }
 
     @Test
     void route2IngressTestMultipleDomainsThrowsException() {
-        // Arrange
         Route route = new Route();
-        route.setDomains(Collections.singletonList("example.com"));
+        route.setDomains(Collections.singletonList("higress.cn"));
         route.setPath(RoutePredicate.builder().matchType("exact").matchValue("/test").build());
         route.setServices(Collections.singletonList(new UpstreamService()));
-        // Act & Assert
+
         Assertions.assertThrows(IllegalArgumentException.class, () -> converter.route2Ingress(route));
     }
 
     @Test
     void route2IngressTestInvalidPathMatchTypeThrowsException() {
-        // Arrange
         Route route = new Route();
-        route.setDomains(Collections.singletonList("example.com"));
+        route.setDomains(Collections.singletonList("higress.cn"));
         route.setPath(RoutePredicate.builder().matchType("invalid").matchValue("/test").build());
         route.setServices(Collections.singletonList(new UpstreamService()));
 
-        // Act & Assert
         Assertions.assertThrows(IllegalArgumentException.class, () -> converter.route2Ingress(route));
     }
 
 
     @Test
     void route2IngressTestCustomAnnotationsValidInputSuccess() {
-        // Arrange
         Route route = new Route();
         route.setName("test-route");
-        route.setDomains(Collections.singletonList("example.com"));
-        route.setCustomConfigs(Collections.singletonMap("custom.annotation.com", "value"));
+        route.setDomains(Collections.singletonList("higress.cn"));
+        route.setCustomConfigs(Collections.singletonMap("custom.higress.cn", "value"));
 
-        // Act
         V1Ingress ingress = converter.route2Ingress(route);
 
-        // Assert
         Assertions.assertNotNull(ingress);
         Assertions.assertEquals("test-route", ingress.getMetadata().getName());
-        Assertions.assertEquals("value", ingress.getMetadata().getAnnotations().get("custom.annotation.com"));
+        Assertions.assertEquals("value", ingress.getMetadata().getAnnotations().get("custom.higress.cn"));
     }
 
     @Test
     void route2IngressTestCustomAnnotationsThrowsValidationException() {
         // Arrange
         Route route = new Route();
-        route.setDomains(Collections.singletonList("example.com"));
+        route.setDomains(Collections.singletonList("higress.cn"));
         route.setCustomConfigs(Collections.singletonMap("higress.io/enable-proxy-next-upstream", "value"));
 
         // Act & Assert
@@ -430,23 +424,20 @@ public class KubernetesModelConverterTest {
 
     @Test
     void route2IngressTestCorsConfigSuccess() {
-        // Arrange
         Route route = new Route();
         route.setName("test-route");
-        route.setDomains(Collections.singletonList("example.com"));
-        route.setCors(new CorsConfig(true,                           // enabled (Boolean)
-                Collections.singletonList("http://example.com"), // allowOrigins (List<String>)
-                Collections.singletonList("GET"),                // allowMethods (List<String>)
-                Collections.singletonList("Content-Type"),       // allowHeaders (List<String>)
-                Collections.singletonList("Content-Length"), // exposeHeaders (List<String>)
-                3600,                           // maxAge (Integer)
-                true                           // allowCredentials (Boolean)
+        route.setDomains(Collections.singletonList("higress.cn"));
+        route.setCors(new CorsConfig(true,                          // enabled (Boolean)
+                Collections.singletonList("https://higress.cn"),            // allowOrigins (List<String>)
+                Collections.singletonList("GET"),                           // allowMethods (List<String>)
+                Collections.singletonList("Content-Type"),                  // allowHeaders (List<String>)
+                Collections.singletonList("Content-Length"),                // exposeHeaders (List<String>)
+                3600,                                                       // maxAge (Integer)
+                true                                                        // allowCredentials (Boolean)
         ));
 
-        // Act
         V1Ingress ingress = converter.route2Ingress(route);
 
-        // Assert
         Assertions.assertNotNull(ingress);
         Assertions.assertEquals("test-route", ingress.getMetadata().getName());
         Assertions.assertTrue(Boolean.parseBoolean(
@@ -455,7 +446,7 @@ public class KubernetesModelConverterTest {
                 ingress.getMetadata().getAnnotations().get(KubernetesConstants.Annotation.CORS_MAX_AGE_KEY));
         Assertions.assertTrue(Boolean.parseBoolean(
                 ingress.getMetadata().getAnnotations().get(KubernetesConstants.Annotation.CORS_ALLOW_CREDENTIALS_KEY)));
-        Assertions.assertEquals("http://example.com",
+        Assertions.assertEquals("https://higress.cn",
                 ingress.getMetadata().getAnnotations().get(KubernetesConstants.Annotation.CORS_ALLOW_ORIGIN_KEY));
         Assertions.assertEquals("Content-Type",
                 ingress.getMetadata().getAnnotations().get(KubernetesConstants.Annotation.CORS_ALLOW_HEADERS_KEY));
@@ -468,16 +459,13 @@ public class KubernetesModelConverterTest {
 
     @Test
     void route2IngressTestMethodsSuccess() {
-        // Arrange
         Route route = new Route();
         route.setName("test-route");
-        route.setDomains(Collections.singletonList("example.com"));
+        route.setDomains(Collections.singletonList("higress.cn"));
         route.setMethods(Collections.singletonList("GET"));
 
-        // Act
         V1Ingress ingress = converter.route2Ingress(route);
 
-        // Assert
         Assertions.assertNotNull(ingress);
         Assertions.assertEquals("test-route", ingress.getMetadata().getName());
         Assertions.assertEquals("GET", ingress.getMetadata().getAnnotations().get(KubernetesConstants.Annotation.METHOD_KEY));
@@ -485,16 +473,13 @@ public class KubernetesModelConverterTest {
 
     @Test
     void route2IngressTestRewriteConfig() {
-        // Arrange
         Route route = new Route();
         route.setName("test-route");
-        route.setDomains(Collections.singletonList("example.com"));
+        route.setDomains(Collections.singletonList("higress.cn"));
         route.setRewrite(new RewriteConfig(true, "/new-path", "new-host"));
 
-        // Act
         V1Ingress ingress = converter.route2Ingress(route);
 
-        // Assert
         Assertions.assertNotNull(ingress);
         Assertions.assertEquals("test-route", ingress.getMetadata().getName());
         Assertions.assertTrue(Boolean.parseBoolean(
@@ -507,16 +492,13 @@ public class KubernetesModelConverterTest {
 
     @Test
     void route2IngressTestProxyNextUpstreamConfig() {
-        // Arrange
         Route route = new Route();
         route.setName("test-route");
-        route.setDomains(Collections.singletonList("example.com"));
+        route.setDomains(Collections.singletonList("higress.cn"));
         route.setProxyNextUpstream(new ProxyNextUpstreamConfig(true, 2, 10, new String[]{"$http_4xx"}));
 
-        // Act
         V1Ingress ingress = converter.route2Ingress(route);
 
-        // Assert
         Assertions.assertNotNull(ingress);
         Assertions.assertEquals("test-route", ingress.getMetadata().getName());
         Assertions.assertTrue(Boolean.parseBoolean(ingress.getMetadata().getAnnotations()
@@ -533,12 +515,12 @@ public class KubernetesModelConverterTest {
     @Test
     public void route2IngressTestPrefixPathSingleService() {
         Route route = buildBasicRoute();
-        route.setName("test");
+        route.setName("higressTest");
         RoutePredicate pathPredicate = route.getPath();
         pathPredicate.setMatchType(RoutePredicateTypeEnum.PRE.toString());
         pathPredicate.setCaseSensitive(null);
         pathPredicate.setMatchValue("/");
-        UpstreamService service = new UpstreamService("hello.default.svc.cluster.local", null, null, null);
+        UpstreamService service = new UpstreamService("higress.default.svc.cluster.local", null, null, null);
         route.setServices(Collections.singletonList(service));
 
         V1Ingress ingress = converter.route2Ingress(route);
@@ -548,7 +530,7 @@ public class KubernetesModelConverterTest {
         V1ObjectMeta expectedMetadata = expectedIngress.getMetadata();
         expectedMetadata.setName(route.getName());
         KubernetesUtil.setAnnotation(expectedMetadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "hello.default.svc.cluster.local");
+                "higress.default.svc.cluster.local");
 
         V1HTTPIngressPath expectedPath = expectedIngress.getSpec().getRules().get(0).getHttp().getPaths().get(0);
         expectedPath.setPathType(KubernetesConstants.IngressPathType.PREFIX);
@@ -560,12 +542,12 @@ public class KubernetesModelConverterTest {
     @Test
     public void route2IngressTestPrefixPathSingleServiceWithWeight() {
         Route route = buildBasicRoute();
-        route.setName("test");
+        route.setName("higressTest");
         RoutePredicate pathPredicate = route.getPath();
         pathPredicate.setMatchType(RoutePredicateTypeEnum.PRE.toString());
         pathPredicate.setCaseSensitive(null);
         pathPredicate.setMatchValue("/");
-        UpstreamService service = new UpstreamService("hello.default.svc.cluster.local", null, null, 15);
+        UpstreamService service = new UpstreamService("higress.default.svc.cluster.local", null, null, 15);
         route.setServices(Collections.singletonList(service));
 
         V1Ingress ingress = converter.route2Ingress(route);
@@ -575,7 +557,7 @@ public class KubernetesModelConverterTest {
         V1ObjectMeta expectedMetadata = expectedIngress.getMetadata();
         expectedMetadata.setName(route.getName());
         KubernetesUtil.setAnnotation(expectedMetadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "hello.default.svc.cluster.local");
+                "higress.default.svc.cluster.local");
 
         V1HTTPIngressPath expectedPath = expectedIngress.getSpec().getRules().get(0).getHttp().getPaths().get(0);
         expectedPath.setPathType(KubernetesConstants.IngressPathType.PREFIX);
@@ -587,12 +569,12 @@ public class KubernetesModelConverterTest {
     @Test
     public void route2IngressTestPrefixPathSingleServiceWithPort() {
         Route route = buildBasicRoute();
-        route.setName("test");
+        route.setName("higressTest");
         RoutePredicate pathPredicate = route.getPath();
         pathPredicate.setMatchType(RoutePredicateTypeEnum.PRE.toString());
         pathPredicate.setCaseSensitive(null);
         pathPredicate.setMatchValue("/");
-        UpstreamService service = new UpstreamService("hello.default.svc.cluster.local", 8080, null, null);
+        UpstreamService service = new UpstreamService("higress.default.svc.cluster.local", 8080, null, null);
         route.setServices(Collections.singletonList(service));
 
         V1Ingress ingress = converter.route2Ingress(route);
@@ -602,7 +584,7 @@ public class KubernetesModelConverterTest {
         V1ObjectMeta expectedMetadata = expectedIngress.getMetadata();
         expectedMetadata.setName(route.getName());
         KubernetesUtil.setAnnotation(expectedMetadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "hello.default.svc.cluster.local:8080");
+                "higress.default.svc.cluster.local:8080");
 
         V1HTTPIngressPath expectedPath = expectedIngress.getSpec().getRules().get(0).getHttp().getPaths().get(0);
         expectedPath.setPathType(KubernetesConstants.IngressPathType.PREFIX);
@@ -614,12 +596,12 @@ public class KubernetesModelConverterTest {
     @Test
     public void route2IngressTestPrefixPathSingleServiceWithPortAndVersion() {
         Route route = buildBasicRoute();
-        route.setName("test");
+        route.setName("higressTest");
         RoutePredicate pathPredicate = route.getPath();
         pathPredicate.setMatchType(RoutePredicateTypeEnum.PRE.toString());
         pathPredicate.setCaseSensitive(null);
         pathPredicate.setMatchValue("/");
-        UpstreamService service = new UpstreamService("hello.default.svc.cluster.local", 8080, "v1", 100);
+        UpstreamService service = new UpstreamService("higress.default.svc.cluster.local", 8080, "v1", 100);
         route.setServices(Collections.singletonList(service));
 
         V1Ingress ingress = converter.route2Ingress(route);
@@ -629,7 +611,7 @@ public class KubernetesModelConverterTest {
         V1ObjectMeta expectedMetadata = expectedIngress.getMetadata();
         expectedMetadata.setName(route.getName());
         KubernetesUtil.setAnnotation(expectedMetadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "hello.default.svc.cluster.local:8080");
+                "higress.default.svc.cluster.local:8080");
 
         V1HTTPIngressPath expectedPath = expectedIngress.getSpec().getRules().get(0).getHttp().getPaths().get(0);
         expectedPath.setPathType(KubernetesConstants.IngressPathType.PREFIX);
@@ -641,14 +623,14 @@ public class KubernetesModelConverterTest {
     @Test
     public void route2IngressTestPrefixPathMultipleServices() {
         Route route = buildBasicRoute();
-        route.setName("test");
+        route.setName("higressTest");
         RoutePredicate pathPredicate = route.getPath();
         pathPredicate.setMatchType(RoutePredicateTypeEnum.PRE.toString());
         pathPredicate.setCaseSensitive(null);
         pathPredicate.setMatchValue("/");
-        UpstreamService service1 = new UpstreamService("hello1.default.svc.cluster.local", 8080, null, 20);
-        UpstreamService service2 = new UpstreamService("hello2.default.svc.cluster.local", 18080, "v1", 30);
-        UpstreamService service3 = new UpstreamService("hello3.default.svc.cluster.local", null, "v2", 50);
+        UpstreamService service1 = new UpstreamService("higress1.default.svc.cluster.local", 8080, null, 20);
+        UpstreamService service2 = new UpstreamService("higress2.default.svc.cluster.local", 18080, "v1", 30);
+        UpstreamService service3 = new UpstreamService("higress3.default.svc.cluster.local", null, "v2", 50);
         route.setServices(Arrays.asList(service1, service2, service3));
 
         V1Ingress ingress = converter.route2Ingress(route);
@@ -658,8 +640,8 @@ public class KubernetesModelConverterTest {
         V1ObjectMeta expectedMetadata = expectedIngress.getMetadata();
         expectedMetadata.setName(route.getName());
         KubernetesUtil.setAnnotation(expectedMetadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "20% hello1.default.svc.cluster.local:8080\n"
-                        + "30% hello2.default.svc.cluster.local:18080 v1\n50% hello3.default.svc.cluster.local v2");
+                "20% higress1.default.svc.cluster.local:8080\n"
+                        + "30% higress2.default.svc.cluster.local:18080 v1\n50% higress3.default.svc.cluster.local v2");
 
         V1HTTPIngressPath expectedPath = expectedIngress.getSpec().getRules().get(0).getHttp().getPaths().get(0);
         expectedPath.setPathType(KubernetesConstants.IngressPathType.PREFIX);
@@ -671,12 +653,12 @@ public class KubernetesModelConverterTest {
     @Test
     public void route2IngressTestExactPathSingleService() {
         Route route = buildBasicRoute();
-        route.setName("test");
+        route.setName("higressTest");
         RoutePredicate pathPredicate = route.getPath();
         pathPredicate.setMatchType(RoutePredicateTypeEnum.EQUAL.toString());
         pathPredicate.setCaseSensitive(null);
         pathPredicate.setMatchValue("/");
-        UpstreamService service = new UpstreamService("hello.default.svc.cluster.local", 8080, "v1", 100);
+        UpstreamService service = new UpstreamService("higress.default.svc.cluster.local", 8080, "v1", 100);
         route.setServices(Collections.singletonList(service));
 
         V1Ingress ingress = converter.route2Ingress(route);
@@ -686,7 +668,7 @@ public class KubernetesModelConverterTest {
         V1ObjectMeta expectedMetadata = expectedIngress.getMetadata();
         expectedMetadata.setName(route.getName());
         KubernetesUtil.setAnnotation(expectedMetadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "hello.default.svc.cluster.local:8080");
+                "higress.default.svc.cluster.local:8080");
 
         V1HTTPIngressPath expectedPath = expectedIngress.getSpec().getRules().get(0).getHttp().getPaths().get(0);
         expectedPath.setPathType(KubernetesConstants.IngressPathType.EXACT);
@@ -698,12 +680,12 @@ public class KubernetesModelConverterTest {
     @Test
     public void route2IngressTestRegularPathSingleService() {
         Route route = buildBasicRoute();
-        route.setName("test");
+        route.setName("higressTest");
         RoutePredicate pathPredicate = route.getPath();
         pathPredicate.setMatchType(RoutePredicateTypeEnum.REGULAR.toString());
         pathPredicate.setMatchValue("/route_\\d+");
         pathPredicate.setCaseSensitive(null);
-        UpstreamService service = new UpstreamService("hello.default.svc.cluster.local", 8080, "v1", 100);
+        UpstreamService service = new UpstreamService("higress.default.svc.cluster.local", 8080, "v1", 100);
         route.setServices(Collections.singletonList(service));
 
         V1Ingress ingress = converter.route2Ingress(route);
@@ -713,7 +695,7 @@ public class KubernetesModelConverterTest {
         V1ObjectMeta expectedMetadata = expectedIngress.getMetadata();
         expectedMetadata.setName(route.getName());
         KubernetesUtil.setAnnotation(expectedMetadata, KubernetesConstants.Annotation.DESTINATION_KEY,
-                "hello.default.svc.cluster.local:8080");
+                "higress.default.svc.cluster.local:8080");
         KubernetesUtil.setAnnotation(expectedMetadata, KubernetesConstants.Annotation.USE_REGEX_KEY,
                 KubernetesConstants.Annotation.TRUE_VALUE);
 
@@ -747,12 +729,11 @@ public class KubernetesModelConverterTest {
 
     @Test
     void configMap2DomainTestValidConfigMapShouldReturnDomain() {
-        // Arrange
         V1ObjectMeta metadata = new V1ObjectMeta();
         metadata.setResourceVersion("1");
 
         Map<String, String> data = new HashMap<>();
-        data.put(CommonKey.DOMAIN, "example.com");
+        data.put(CommonKey.DOMAIN, "higress.cn");
         data.put(KubernetesConstants.K8S_CERT, "cert-identifier");
         data.put(KubernetesConstants.K8S_ENABLE_HTTPS, "true");
 
@@ -760,12 +741,10 @@ public class KubernetesModelConverterTest {
         configMap.setMetadata(metadata);
         configMap.setData(data);
 
-        // Act
         Domain domain = converter.configMap2Domain(configMap);
 
-        // Assert
         Assertions.assertNotNull(domain);
-        Assertions.assertEquals("example.com", domain.getName());
+        Assertions.assertEquals("higress.cn", domain.getName());
         Assertions.assertEquals("1", domain.getVersion());
         Assertions.assertEquals("cert-identifier", domain.getCertIdentifier());
         Assertions.assertEquals("true", domain.getEnableHttps());
@@ -774,19 +753,16 @@ public class KubernetesModelConverterTest {
 
     @Test
     void configMap2DomainTestNullMetadataShouldReturnDomainWithNullVersion() {
-        // Arrange
         Map<String, String> data = new HashMap<>();
-        data.put(CommonKey.DOMAIN, "example.com");
+        data.put(CommonKey.DOMAIN, "higress.cn");
 
         V1ConfigMap configMap = new V1ConfigMap();
         configMap.setData(data);
 
-        // Act
         Domain domain = converter.configMap2Domain(configMap);
 
-        // Assert
         Assertions.assertNotNull(domain);
-        Assertions.assertEquals("example.com", domain.getName());
+        Assertions.assertEquals("higress.cn", domain.getName());
         Assertions.assertNull(domain.getVersion());
         Assertions.assertNull(domain.getCertIdentifier());
         Assertions.assertNull(domain.getEnableHttps());
@@ -794,11 +770,9 @@ public class KubernetesModelConverterTest {
 
     @Test
     void configMap2DomainTestNullDataShouldThrowIllegalArgumentException() {
-        // Arrange
         V1ConfigMap configMap = new V1ConfigMap();
         configMap.setData(null);
 
-        // Act & Assert
         IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             converter.configMap2Domain(configMap);
         });
@@ -807,19 +781,16 @@ public class KubernetesModelConverterTest {
 
     @Test
     void configMap2DomainTestMissingFieldsShouldReturnDomainWithNullFields() {
-        // Arrange
         Map<String, String> data = new HashMap<>();
-        data.put(CommonKey.DOMAIN, "example.com");
+        data.put(CommonKey.DOMAIN, "higress.cn");
 
         V1ConfigMap configMap = new V1ConfigMap();
         configMap.setData(data);
 
-        // Act
         Domain domain = converter.configMap2Domain(configMap);
 
-        // Assert
         Assertions.assertNotNull(domain);
-        Assertions.assertEquals("example.com", domain.getName());
+        Assertions.assertEquals("higress.cn", domain.getName());
         Assertions.assertNull(domain.getCertIdentifier());
         Assertions.assertNull(domain.getEnableHttps());
     }
@@ -1063,22 +1034,22 @@ public class KubernetesModelConverterTest {
         V1alpha1WasmPlugin srcPlugin = new V1alpha1WasmPlugin();
         V1alpha1WasmPluginSpec srcSpec = new V1alpha1WasmPluginSpec();
         srcSpec.setMatchRules(new ArrayList<>());
-        srcSpec.getMatchRules().add(MatchRule.forDomain("example.com"));
-        srcSpec.getMatchRules().add(MatchRule.forDomain("test.com"));
+        srcSpec.getMatchRules().add(MatchRule.forDomain("higress.cn"));
+        srcSpec.getMatchRules().add(MatchRule.forDomain("test.higress.cn"));
         srcPlugin.setSpec(srcSpec);
 
         V1alpha1WasmPlugin dstPlugin = new V1alpha1WasmPlugin();
         V1alpha1WasmPluginSpec dstSpec = new V1alpha1WasmPluginSpec();
         dstSpec.setMatchRules(new ArrayList<>());
-        dstSpec.getMatchRules().add(MatchRule.forDomain("example.com"));
-        dstSpec.getMatchRules().add(MatchRule.forDomain("test.com"));
+        dstSpec.getMatchRules().add(MatchRule.forDomain("higress.cn"));
+        dstSpec.getMatchRules().add(MatchRule.forDomain("test.higress.cn"));
         dstPlugin.setSpec(dstSpec);
 
         converter.mergeWasmPluginSpec(srcPlugin, dstPlugin);
 
         List<MatchRule> expected = new ArrayList<>();
-        expected.add(MatchRule.forDomain("example.com"));
-        expected.add(MatchRule.forDomain("test.com"));
+        expected.add(MatchRule.forDomain("higress.cn"));
+        expected.add(MatchRule.forDomain("test.higress.cn"));
 
         Assertions.assertEquals(expected, dstPlugin.getSpec().getMatchRules());
     }
@@ -1093,13 +1064,13 @@ public class KubernetesModelConverterTest {
         V1alpha1WasmPlugin dstPlugin = new V1alpha1WasmPlugin();
         V1alpha1WasmPluginSpec dstSpec = new V1alpha1WasmPluginSpec();
         dstSpec.setMatchRules(new ArrayList<>());
-        dstSpec.getMatchRules().add(MatchRule.forDomain("example.com"));
+        dstSpec.getMatchRules().add(MatchRule.forDomain("higress.cn"));
         dstPlugin.setSpec(dstSpec);
 
         converter.mergeWasmPluginSpec(srcPlugin, dstPlugin);
 
         List<MatchRule> expected = new ArrayList<>();
-        expected.add(MatchRule.forDomain("example.com"));
+        expected.add(MatchRule.forDomain("higress.cn"));
 
         Assertions.assertEquals(expected, dstPlugin.getSpec().getMatchRules());
     }
@@ -1139,21 +1110,21 @@ public class KubernetesModelConverterTest {
         V1alpha1WasmPlugin srcPlugin = new V1alpha1WasmPlugin();
         V1alpha1WasmPluginSpec srcSpec = new V1alpha1WasmPluginSpec();
         srcSpec.setMatchRules(new ArrayList<>());
-        srcSpec.getMatchRules().add(MatchRule.forDomain("example.com"));
-        srcSpec.getMatchRules().add(MatchRule.forDomain("test.com"));
+        srcSpec.getMatchRules().add(MatchRule.forDomain("higress.cn"));
+        srcSpec.getMatchRules().add(MatchRule.forDomain("test.higress.cn"));
         srcPlugin.setSpec(srcSpec);
 
         V1alpha1WasmPlugin dstPlugin = new V1alpha1WasmPlugin();
         V1alpha1WasmPluginSpec dstSpec = new V1alpha1WasmPluginSpec();
         dstSpec.setMatchRules(new ArrayList<>());
-        dstSpec.getMatchRules().add(MatchRule.forDomain("example.com"));
+        dstSpec.getMatchRules().add(MatchRule.forDomain("higress.cn"));
         dstPlugin.setSpec(dstSpec);
 
         converter.mergeWasmPluginSpec(srcPlugin, dstPlugin);
 
         List<MatchRule> expected = new ArrayList<>();
-        expected.add(MatchRule.forDomain("example.com"));
-        expected.add(MatchRule.forDomain("test.com"));
+        expected.add(MatchRule.forDomain("higress.cn"));
+        expected.add(MatchRule.forDomain("test.higress.cn"));
 
         Assertions.assertEquals(expected, dstPlugin.getSpec().getMatchRules());
     }
@@ -1167,7 +1138,6 @@ public class KubernetesModelConverterTest {
         WasmPluginInstance instance = converter.getWasmPluginInstanceFromCr(plugin, WasmPluginInstanceScope.GLOBAL,
                 null);
         Assertions.assertNotNull(instance);
-        //        Assertions. assertEquals("global", instance.getPluginName());
         Assertions.assertEquals("v1", instance.getPluginVersion());
         Assertions.assertEquals(WasmPluginInstanceScope.GLOBAL, instance.getScope());
         Assertions.assertTrue(instance.getEnabled());
@@ -1179,12 +1149,11 @@ public class KubernetesModelConverterTest {
     void setWasmPluginInstanceToCrTestDomainScopeNotConfigured() {
         V1alpha1WasmPlugin plugin = new V1alpha1WasmPlugin();
         plugin.setMetadata(createMetadata("domain", "test-plugin", "v1"));
-        plugin.setSpec(createSpecWithDomainConfig("example.com"));
+        plugin.setSpec(createSpecWithDomainConfig("higress.cn"));
 
         WasmPluginInstance instance = converter.getWasmPluginInstanceFromCr(plugin, WasmPluginInstanceScope.DOMAIN,
-                "example.com");
+                "higress.cn");
         Assertions.assertNotNull(instance);
-        //        Assertions. assertEquals("domain", instance.getPluginName());
         Assertions.assertEquals("v1", instance.getPluginVersion());
         Assertions.assertEquals(WasmPluginInstanceScope.DOMAIN, instance.getScope());
         Assertions.assertTrue(instance.getEnabled());
@@ -1206,7 +1175,6 @@ public class KubernetesModelConverterTest {
         WasmPluginInstance instance = converter.getWasmPluginInstanceFromCr(plugin, WasmPluginInstanceScope.ROUTE,
                 "test-route");
         Assertions.assertNotNull(instance);
-        //        Assertions. assertEquals("route", instance.getPluginName());
         Assertions.assertEquals("v1", instance.getPluginVersion());
         Assertions.assertEquals(WasmPluginInstanceScope.ROUTE, instance.getScope());
         Assertions.assertTrue(instance.getEnabled());
@@ -1232,7 +1200,7 @@ public class KubernetesModelConverterTest {
     void setWasmPluginInstanceToCrTestDomainScopeShouldAddOrUpdateDomainRule() {
         V1alpha1WasmPlugin cr = new V1alpha1WasmPlugin();
         WasmPluginInstance instance = WasmPluginInstance.builder().scope(WasmPluginInstanceScope.DOMAIN)
-                .target("example.com").enabled(true).configurations(Map.of("key", "value")).build();
+                .target("higress.cn").enabled(true).configurations(Map.of("key", "value")).build();
 
         converter.setWasmPluginInstanceToCr(cr, instance);
 
@@ -1242,7 +1210,7 @@ public class KubernetesModelConverterTest {
         Assertions.assertNotNull(matchRules);
         Assertions.assertEquals(1, matchRules.size());
         MatchRule domainRule = matchRules.get(0);
-        Assertions.assertTrue(domainRule.getDomain().contains("example.com"));
+        Assertions.assertTrue(domainRule.getDomain().contains("higress.cn"));
         Assertions.assertEquals(Map.of("key", "value"), domainRule.getConfig());
         Assertions.assertFalse(domainRule.getConfigDisable());
     }
@@ -1251,11 +1219,11 @@ public class KubernetesModelConverterTest {
     void setWasmPluginInstanceToCrTestDomainScopeExistingRuleShouldUpdateExistingDomainRule() {
         V1alpha1WasmPlugin cr = new V1alpha1WasmPlugin();
         V1alpha1WasmPluginSpec spec = new V1alpha1WasmPluginSpec();
-        spec.setMatchRules(List.of(new MatchRule(false, Map.of("key", "original"), List.of("example.com"), List.of())));
+        spec.setMatchRules(List.of(new MatchRule(false, Map.of("key", "original"), List.of("higress.cn"), List.of())));
         cr.setSpec(spec);
 
         WasmPluginInstance instance = WasmPluginInstance.builder().scope(WasmPluginInstanceScope.DOMAIN)
-                .target("example.com").enabled(true).configurations(Map.of("key", "updated")).build();
+                .target("higress.cn").enabled(true).configurations(Map.of("key", "updated")).build();
 
         converter.setWasmPluginInstanceToCr(cr, instance);
 
@@ -1263,7 +1231,7 @@ public class KubernetesModelConverterTest {
         Assertions.assertNotNull(matchRules);
         Assertions.assertEquals(1, matchRules.size());
         MatchRule domainRule = matchRules.get(0);
-        Assertions.assertTrue(domainRule.getDomain().contains("example.com"));
+        Assertions.assertTrue(domainRule.getDomain().contains("higress.cn"));
         Assertions.assertEquals(Map.of("key", "updated"), domainRule.getConfig());
         Assertions.assertFalse(domainRule.getConfigDisable());
     }
@@ -1309,13 +1277,13 @@ public class KubernetesModelConverterTest {
         List<MatchRule> matchRules = new ArrayList<>();
         MatchRule rule = new MatchRule();
         rule.setDomain(new ArrayList<String>() {{
-            add("example.com");
+            add("higress.cn");
         }});
         matchRules.add(rule);
         spec.setMatchRules(matchRules);
         cr.setSpec(spec);
 
-        boolean result = converter.removeWasmPluginInstanceFromCr(cr, WasmPluginInstanceScope.DOMAIN, "example.com");
+        boolean result = converter.removeWasmPluginInstanceFromCr(cr, WasmPluginInstanceScope.DOMAIN, "higress.cn");
 
         Assertions.assertTrue(result);
         Assertions.assertTrue(cr.getSpec().getMatchRules().isEmpty());
@@ -1328,7 +1296,7 @@ public class KubernetesModelConverterTest {
         List<MatchRule> matchRules = new ArrayList<>();
         MatchRule rule = new MatchRule();
         rule.setDomain(new ArrayList<String>() {{
-            add("example.com");
+            add("higress.cn");
         }});
         matchRules.add(rule);
         spec.setMatchRules(matchRules);
@@ -1739,7 +1707,7 @@ public class KubernetesModelConverterTest {
         metadata.setResourceVersion("1");
 
         V1IngressTLS tls = new V1IngressTLS();
-        tls.setHosts(Arrays.asList("example.com", "test.example.com"));
+        tls.setHosts(Arrays.asList("higress.cn", "test.higress.cn"));
 
         spec.setTls(Arrays.asList(tls));
 
@@ -1768,7 +1736,7 @@ public class KubernetesModelConverterTest {
         metadata.setName("test-ingress");
         metadata.setResourceVersion("1");
         metadata.setAnnotations(new HashMap<String, String>() {{
-            put("example.com", "annotation-value");
+            put("higress.cn", "annotation-value");
         }});
 
         V1Ingress ingress = new V1Ingress();
@@ -1783,7 +1751,7 @@ public class KubernetesModelConverterTest {
         Assertions.assertEquals("test-ingress", route.getName());
         Assertions.assertEquals("1", route.getVersion());
         Assertions.assertNotNull(route.getCustomConfigs());
-        Assertions.assertEquals("annotation-value", route.getCustomConfigs().get("example.com"));
+        Assertions.assertEquals("annotation-value", route.getCustomConfigs().get("higress.cn"));
     }
 
     @Test
@@ -1828,21 +1796,21 @@ public class KubernetesModelConverterTest {
 
     @Test
     public void domainName2ConfigMapNameTestNormalDomainNameConfigMapNameCreated() {
-        String domainName = "www.example.com";
-        String expectedConfigMapName = "domain-www.example.com";
+        String domainName = "www.higress.cn";
+        String expectedConfigMapName = "domain-www.higress.cn";
         String actualConfigMapName = converter.domainName2ConfigMapName(domainName);
 
-        Assertions.assertEquals(expectedConfigMapName, actualConfigMapName, "ConfigMap name should be 'domain-www.example.com'");
+        Assertions.assertEquals(expectedConfigMapName, actualConfigMapName, "ConfigMap name should be 'domain-www.higress.cn'");
     }
 
     @Test
     public void domainName2ConfigMapNameTestWildcardDomainNameConfigMapNameCreated() {
-        String domainName = "*.example.com";
-        String expectedConfigMapName = "domain-wildcard.example.com";
+        String domainName = "*.higress.cn";
+        String expectedConfigMapName = "domain-wildcard.higress.cn";
         String actualConfigMapName = converter.domainName2ConfigMapName(domainName);
 
         Assertions.assertEquals(expectedConfigMapName, actualConfigMapName,
-                "ConfigMap name should be 'domain-wildcard.example.com'");
+                "ConfigMap name should be 'domain-wildcard.higress.cn'");
     }
 
 
